@@ -18,8 +18,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: user
-          POSTGRES_USER: 1234
+          POSTGRES_user: user
+          POSTGRES_PASSWORD: 1234
           POSTGRES_DB: test  
         options: >-
           --health-cmd pg_isready
