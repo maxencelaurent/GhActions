@@ -49,7 +49,7 @@ jobs:
         PR_NAME: ${{ github.head_ref }}
         PR_NUMBER: ${{ github.event.number}}
       run: |
-        echo "::set-env name=BRANCH::$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${{ github.base_ref }}; else echo ${{ github.ref}} | sed -e 's/refs\/heads\///'  ; fi)" 
+        echo "BRANCH=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${{ github.base_ref }}; else echo ${{ github.ref}} | sed -e 's/refs\/heads\///'  ; fi)" >> $GITHUB_ENV 
         echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
         echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
         echo RunNumber: : ${GITHUB_RUN_NUMBER}
