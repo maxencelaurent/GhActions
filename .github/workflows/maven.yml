@@ -66,7 +66,7 @@ jobs:
       env:
         GIT_USER: ${{ secrets.GIT_USER }}
         GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-        GITHUB_EVENT_TYPE: ${ github.event_type }}
+        GITHUB_EVENT_TYPE: ${{ github.event_type }}
       run: |
         echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
         echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
@@ -74,7 +74,7 @@ jobs:
     - name: print env
       shell: bash
       env:
-        GITHUB_EVENT_TYPE: ${ github.event_type }}
+        GITHUB_EVENT_TYPE: ${{ github.event_type }}
         PR_NAME: ${{ github.head_ref }}
         PR_NUMBER: ${{ github.event.number}}
       run: |
