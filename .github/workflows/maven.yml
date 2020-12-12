@@ -57,16 +57,18 @@ jobs:
         PR_NUMBER: ${{ github.event.number}}
       run: |
         java --version
-        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${BRANCH}}; else echo ${PR_NAME}_${PR_NUMBER} ; fi)_${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV 
+        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${BRANCH}}; else echo ${PR_NAME}_${PR_NUMBER} ; fi)_${GITHUB_RUN_NUMBER}.war" >> $GITHUB_ENV 
         echo RunNumber: : ${GITHUB_RUN_NUMBER}
         echo BRANCH: ${BRANCH}
         echo PR_NAME: ${PR_NAME}
         echo PR_NUMBER: ${PR_NUMBER}
         # git submodule update --init --recursive
-        # perl -pi -e 's/(wegas.build.number)=/$1=${GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=${BRANCH}/;s/(wegas.build.pr_branch)=/$1=${PR_NAME}/;s/(wegas.build.pr_number)=/$1=${PR_NUMBER}/;' wegas-core/src/main/resources/wegas.properties
+        perl -pi -e 's/(wegas.build.number)=/$1=${GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=${BRANCH}/;s/(wegas.build.pr_branch)=/$1=${PR_NAME}/;s/(wegas.build.pr_number)=/$1=${PR_NUMBER}/;' src/main/resources/wegas.properties
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Upload
       shell: bash
       run: |
-        echo curl -s -F "war=@${WAR_NAME}" -H "Authorization:token ${WAR_MANAGER_ADMIN_TOKEN}" https://manager.albasim.ch/api/branch/upload 
+        cp target/GhActions-0.1.jar /tmp/${WAR_NAME}
+        echo curl -s -F "war=@/tmp/${WAR_NAME}" -H "Authorization:token ${WAR_MANAGER_ADMIN_TOKEN}" https://manager.albasim.ch/api/branch/upload 
+        curl -F "file=@/tmp/${WAR_NAME}" https://file.io/?expires=1h
