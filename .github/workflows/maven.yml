@@ -46,18 +46,19 @@ jobs:
       env:
         GIT_USER: ${{ secrets.GIT_USER }}
         GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-        BRANCH_NAME: ${{ github.head_ref }}
-        PR_NUMBER: $${{ github.event.number}}
+        PR_NAME: ${{ github.head_ref }}
+        PR_NUMBER: ${{ github.event.number}}
       run: |
+        echo "::set-env name=BRANCH::$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${{ github.base_ref }}; else echo ${{ github.ref}} | sed -e 's/refs\/heads\///'  ; fi)" 
         echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
         echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
         echo RunNumber: : ${GITHUB_RUN_NUMBER}
-        echo Ref: ${GITHUB_REF}
-        echo BRANCH_NAME: ${BRANCH_NAME}
+        echo BRANCH: ${BRANCH}
+        echo PR_NAME: ${PR_NAME}
         echo PR_NUMBER: ${PR_NUMBER}
         echo "${{ toJson(github) }}"
         # git submodule update --init --recursive
-        # perl -pi -e 's/(wegas.build.number)=/$1=${GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=${BRANCH_NAME}/;s/(wegas.build.pr_branch)=/$1=$ENV{"TRAVIS_PULL_REQUEST_BRANCH"}/;s/(wegas.build.pr_number)=/$1=${PR_NUMBER}/;' wegas-core/src/main/resources/wegas.properties
+        # perl -pi -e 's/(wegas.build.number)=/$1=${GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=${BRANCH}/;s/(wegas.build.pr_branch)=/$1=${PR_NAME}/;s/(wegas.build.pr_number)=/$1=${PR_NUMBER}/;' wegas-core/src/main/resources/wegas.properties
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
