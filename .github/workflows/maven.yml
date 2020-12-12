@@ -49,7 +49,6 @@ jobs:
         BRANCH_NAME: ${{ github.head_ref }}
         PR_NUMBER: $${{ github.event.number}}
       run: |
-        echo "::set-env name=BRANCH_NAME::${TRAVIS_BRANCH:-$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')}"
         echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
         echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
         echo RunNumber: : $ENV{"GITHUB_RUN_NUMBER"}
