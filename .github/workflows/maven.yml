@@ -34,5 +34,24 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: prepare repository
+      shell: bash
+      env:
+        GIT_USER: ${{ secrets.GIT_USER }}
+        GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        BRANCH_NAME: ${{ github.head_ref }}
+        PR_NUMBER: $${{ github.event.number}}
+      run: |
+        echo "::set-env name=BRANCH_NAME::${TRAVIS_BRANCH:-$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')}"
+        echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
+        echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
+        echo RunNumber: : $ENV{"GITHUB_RUN_NUMBER"}
+        echo Ref: $ENV{"GITHUB_REF"}
+        echo BRANCH_NAME: $ENV{"BRANCH_NAME"}
+        echo PR_NUMBER: $ENV{"PR_NUMBER"}
+        echo "${{ toJson(github) }}"
+        # git submodule update --init --recursive
+        # perl -pi -e 's/(wegas.build.number)=/$1=$ENV{"GITHUB_RUN_NUMBER"}/;s/(wegas.build.branch)=/$1=$ENV{"BRANCH_NAME"}/;s/(wegas.build.pr_branch)=/$1=$ENV{"TRAVIS_PULL_REQUEST_BRANCH"}/;s/(wegas.build.pr_number)=/$1=$ENV{"PR_NUMBER"}/;' wegas-core/src/main/resources/wegas.properties
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
