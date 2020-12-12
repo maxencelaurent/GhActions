@@ -57,7 +57,7 @@ jobs:
         PR_NUMBER: ${{ github.event.number}}
       run: |
         java --version
-        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${BRANCH}}; else echo ${PR_NAME}_${PR_NUMBER} ; fi)_${GITHUB_RUN_NUMBER}.war" >> $GITHUB_ENV 
+        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${PR_NAME}_${PR_NUMBER} ; else echo ${BRANCH}; fi)_${GITHUB_RUN_NUMBER}.war" >> $GITHUB_ENV 
         echo RunNumber: : ${GITHUB_RUN_NUMBER}
         echo BRANCH: ${BRANCH}
         echo PR_NAME: ${PR_NAME}
