@@ -56,13 +56,16 @@ jobs:
         PR_NAME: ${{ github.head_ref }}
         PR_NUMBER: ${{ github.event.number}}
       run: |
+        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${BRANCH}}; else echo ${PR_NAME}_${PR_NUMBER} ; fi)_${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV 
         echo RunNumber: : ${GITHUB_RUN_NUMBER}
         echo BRANCH: ${BRANCH}
         echo PR_NAME: ${PR_NAME}
         echo PR_NUMBER: ${PR_NUMBER}
-        echo "${{ toJson(github) }}"
         # git submodule update --init --recursive
         # perl -pi -e 's/(wegas.build.number)=/$1=${GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=${BRANCH}/;s/(wegas.build.pr_branch)=/$1=${PR_NAME}/;s/(wegas.build.pr_number)=/$1=${PR_NUMBER}/;' wegas-core/src/main/resources/wegas.properties
-
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Upload
+      shell: bash
+      run: |
+        echo curl -s -F "war=@${WAR_NAME}" -H "Authorization:token ${WAR_MANAGER_ADMIN_TOKEN}" https://manager.albasim.ch/api/branch/upload 
