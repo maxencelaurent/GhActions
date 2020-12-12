@@ -18,7 +18,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_user: user
+          POSTGRES_USER: user
           POSTGRES_PASSWORD: 1234
           POSTGRES_DB: test  
         options: >-
