@@ -31,6 +31,7 @@ public class Main {
             st.execute(sql);
         } catch (SQLException ex) {
             System.out.println("Error..." + ex);
+            throw new RuntimeException(ex);
         }
     }
 }
