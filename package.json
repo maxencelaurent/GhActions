@@ -1,0 +1,26 @@
+{
+  "name": "the-noop-app",
+  "version": "1.0.0",
+  "description": "no op",
+  "author": "Maxence Laurent <maxence.laurent@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+  },
+  "engines": {
+    "node": "~11.10.1"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-regular-svg-icons": "^5.14.0",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
+    "@reduxjs/toolkit": "^1.4.0",
+    "emotion": "^10.0.27",
+    "lodash": "^4.17.19",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.1"
+  }
+}
+
