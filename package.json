@@ -5,8 +5,7 @@
   "author": "Maxence Laurent <maxence.laurent@gmail.com>",
   "license": "MIT",
   "private": true,
-  "scripts": {
-  },
+  "scripts": {},
   "engines": {
     "node": "~11.10.1"
   },
@@ -17,10 +16,10 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@reduxjs/toolkit": "^1.4.0",
     "emotion": "^10.0.27",
+    "less": "^3.13.0",
     "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1"
   }
 }
-
