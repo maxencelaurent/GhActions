@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Start mailhog
         run: do something with docker
-      - uses: docker://mailhog
+      - uses: docker://mailhog/mailhog
       # Runs a set of commands using the runners shell
       - name: stop mailhog
         run: |
