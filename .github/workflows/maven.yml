@@ -8,7 +8,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 jobs:
   build:
 
@@ -61,6 +63,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+
     - name: set env
       shell: bash
       env:
@@ -70,27 +73,33 @@ jobs:
         echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
         echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
         echo "BRANCH=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${{ github.base_ref }}; else echo ${{ github.ref}} | sed -e 's/refs\/heads\///'  ; fi)" >> $GITHUB_ENV 
-    - name: print env
-      shell: bash
-      env:
-        PR_NAME: ${{ github.head_ref }}
-        PR_NUMBER: ${{ github.event.number}}
-      run: |
-        echo JAVA: $(java --version)
-        echo NODE: $(node --version)
-        echo YARN: $(yarn --version)
-        echo "WAR_NAME=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${PR_NAME}_${PR_NUMBER} ; else echo ${BRANCH}; fi)_${GITHUB_RUN_NUMBER}.war" >> $GITHUB_ENV 
-        echo RunNumber: : ${GITHUB_RUN_NUMBER}
-        echo BRANCH: ${BRANCH}
-        echo PR_NAME: ${PR_NAME}
-        echo PR_NUMBER: ${PR_NUMBER}
-        # git submodule update --init --recursive
-        perl -pi -e 's/(wegas.build.number)=/$1=$ENV{GITHUB_RUN_NUMBER}/;s/(wegas.build.branch)=/$1=$ENV{BRANCH}/;s/(wegas.build.pr_branch)=/$1=$ENV{PR_NAME}/;s/(wegas.build.pr_number)=/$1=$ENV{PR_NUMBER}/;' src/main/resources/wegas.properties
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: Upload
-      shell: bash
-      run: |
-        cp target/GhActions-0.1.jar /tmp/${WAR_NAME}
-        echo curl -s -F "war=@/tmp/${WAR_NAME}" -H "Authorization:token ${WAR_MANAGER_ADMIN_TOKEN}" https://manager.albasim.ch/api/branch/upload 
-        curl -F "file=@/tmp/${WAR_NAME}" https://file.io/?expires=1d
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract Metadata for docker
+      id: docker-meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: src/main/docker/
+        push: true
+        tags: ${{ steps.docker-meta.outputs.tags }}
+        labels: ${{ steps.docker-meta.outputs.labels }}
+
