@@ -116,7 +116,7 @@ jobs:
   update-dev-fleet:
     needs: build
     runs-on: ubuntu-latest
-    if: {{ $GITHUB_REF == "refs/heads/main" }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
     - name: Update my-fleet with new VERSION.md file
       shell: bash
