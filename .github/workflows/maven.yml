@@ -14,8 +14,24 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 jobs:
-  build:
 
+  update-dev-fleet:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+    - name: Update my-fleet with new VERSION.md file
+      shell: bash
+      run: |
+        git clone --single-branch --branch main "https://${{ secrets.ALBASIM_CI_PAT }}@github.com/maxencelaurent/my-fleet.git" my-fleet
+        echo "GitHub Build #${GITHUB_RUN_NUMBER}, based on ${GITHUB_REF} @ ${GITHUB_SHA}" > my-fleet/VERSION.md
+        cd my-fleet
+        git config user.email "albasim@heig-vd.ch"
+        git config user.name "albasim-ci"
+        git add VERSION.md
+        git commit -m "Update version"
+        git push
+  build:
+    needs: update-dev-fleet
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -112,20 +128,4 @@ jobs:
         tags: ${{ steps.docker-meta.outputs.tags }}
         labels: ${{ steps.docker-meta.outputs.labels }}
 
-  update-dev-fleet:
-    needs: build
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-    - name: Update my-fleet with new VERSION.md file
-      shell: bash
-      run: |
-        git clone --single-branch --branch main "https://$ALBASIM_CI_PAT@github.com/maxencelaurent/my-fleet.git" my-fleet
-        echo "GitHub Build #${GITHUB_RUN_NUMBER}, based on ${GITHUB_REF} @ ${GITHUB_SHA}" > my-fleet/VERSION.md
-        cd my-fleet
-        git config user.email "albasim@heig-vd.ch"
-        git config user.name "albasim-ci"
-        git add VERSION.md
-        git commit -m "Update version"
-        git push
 
