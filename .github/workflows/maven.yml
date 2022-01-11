@@ -113,3 +113,19 @@ jobs:
         tags: ${{ steps.docker-meta.outputs.tags }}
         labels: ${{ steps.docker-meta.outputs.labels }}
 
+
+  update-dev-fleet:
+    need: build
+    uses: ubuntu-latest
+    if: {{ $GITHUB_REF == "refs/heads/main" }}
+    steps:
+    - name: Create VERSION.md file
+      shell: bash
+      run: |
+        git clone --single-branch --branch main "https://x-access-token:$API_TOKEN_GITHUB@github.com/maxencelaurent/my-fleet.git" my-fleet
+        echo "GitHub Build #${GITHUB_RUN_NUMBER}, based on ${GITHUB_REF} @ ${GITHUB_SHA}" > my-fleet/VERSION.md
+        cd my-fleet
+        git add VERSION.md
+        git commit -m "Update version"
+        git push
+
