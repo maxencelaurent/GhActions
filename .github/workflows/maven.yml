@@ -125,7 +125,7 @@ jobs:
         context: src/main/docker/
         platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
         push: true
-        builds-args: GITHUB_RUN_NUMBER=${GITHUB_RUN_NUMBER},DOCKER_IMAGE_TAGS=${{ steps.docker-meta.outputs.tags }}
+        build-args: GITHUB_RUN_NUMBER=${GITHUB_RUN_NUMBER},DOCKER_IMAGE_TAGS=${{ steps.docker-meta.outputs.tags }}
         tags: ${{ steps.docker-meta.outputs.tags }}
         labels: ${{ steps.docker-meta.outputs.labels }}
 
