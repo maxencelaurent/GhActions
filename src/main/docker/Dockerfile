@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:ubuntu-jre
+FROM eclipse-temurin:11-jre-focal
 
 ARG GITHUB_RUN_NUMBER          
 ARG DOCKER_IMAGE_TAGS
