@@ -28,7 +28,7 @@ jobs:
         perl -ip -e "s/(colab\.fleet\.number)=(\d)+/\1=${GITHUB_RUN_NUMBER}/" fleet.yaml
         git config user.email "albasim@heig-vd.ch"
         git config user.name "albasim-ci"
-        git add VERSION.md
+        git add VERSION.md fleet.yaml
         git commit -m "Update version"
         git push
   build:
