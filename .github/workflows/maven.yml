@@ -25,7 +25,7 @@ jobs:
         git clone --single-branch --branch main "https://${{ secrets.ALBASIM_CI_PAT }}@github.com/maxencelaurent/my-fleet.git" my-fleet
         cd my-fleet
         echo "GitHub Build #${GITHUB_RUN_NUMBER}, based on ${GITHUB_REF} @ ${GITHUB_SHA}" > VERSION.md
-        perl -ip -e "s/(colab\.fleet\.number)=(\d)+/\1=${GITHUB_RUN_NUMBER}/" fleet.yaml
+        perl -pi -e "s/(colab\.fleet\.number)=.*$/\1=${GITHUB_RUN_NUMBER}/" fleet.yaml
         git config user.email "albasim@heig-vd.ch"
         git config user.name "albasim-ci"
         git add VERSION.md fleet.yaml
