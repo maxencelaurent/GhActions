@@ -10,29 +10,9 @@ on:
       - 'v*'
   pull_request:
     branches: [ main ]
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 jobs:
 
-  update-dev-fleet:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-    - name: Update my-fleet with new VERSION.md file
-      shell: bash
-      run: |
-        git clone --single-branch --branch main "https://${{ secrets.ALBASIM_CI_PAT }}@github.com/maxencelaurent/my-fleet.git" my-fleet
-        cd my-fleet
-        echo "GitHub Build #${GITHUB_RUN_NUMBER}, based on ${GITHUB_REF} @ ${GITHUB_SHA}" > VERSION.md
-        perl -pi -e "s/(colab\.fleet\.number)=.*$/\1=${GITHUB_RUN_NUMBER}/" fleet.yaml
-        git config user.email "albasim@heig-vd.ch"
-        git config user.name "albasim-ci"
-        git add VERSION.md fleet.yaml
-        git commit -m "Update version"
-        git push
   build:
-    needs: update-dev-fleet
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -49,87 +29,9 @@ jobs:
         ports:
           - 5432:5432
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: recursive
-    - name: Cache local Maven repository
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '11.10.1'
-
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo YARN_CACHE_DIR=$(yarn cache dir) >> $GITHUB_ENV
-
-    - uses: actions/cache@v2
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-      with:
-        path: ${YARN_CACHE_DIR}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
-
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-
     - name: set env
       shell: bash
-      env:
-        GIT_USER: ${{ secrets.GIT_USER }}
-        GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
       run: |
-        echo "MAVEN_OPTS='-Xms800m -Xmx800m'" > ~/.mavenrc
-        echo -e "machine github.com\n  login $GIT_USER\n  password $GIT_TOKEN" >> ~/.netrc
-        echo "BRANCH=$(if [ '${{ github.event_type }}' == 'pull_request' ]; then echo ${{ github.base_ref }}; else echo ${{ github.ref}} | sed -e 's/refs\/heads\///'  ; fi)" >> $GITHUB_ENV 
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Log in to the Container registry
-      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Extract Metadata for docker
-      id: docker-meta
-      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-      with:
-        context: src/main/docker/
-        platforms: linux/amd64
-        push: true
-        build-args: |
-          GITHUB_RUN_NUMBER=${{ github.run_number }}
-          DOCKER_IMAGE_TAGS=${{ steps.docker-meta.outputs.tags }}
-        tags: ${{ steps.docker-meta.outputs.tags }}
-        labels: ${{ steps.docker-meta.outputs.labels }}
+        docker ps
 
 
