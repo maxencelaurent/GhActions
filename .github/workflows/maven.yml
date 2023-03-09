@@ -32,7 +32,10 @@ jobs:
     - name: set env
       shell: bash
       run: |
-        docker run --rm  alpine echo salut
+        docker run -d -name simone alpine yes
         docker ps
+        docker stop simone
+        docker rm simone
+        
 
 
