@@ -19,14 +19,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.5.3
 
     - name: Get version from package.json
+      id: version-number
       run: echo MODULE_VERSION=v$(cat package.json | jq .version | sed -e 's/"//g') >> $GITHUB_OUTPUT
 
     - name: Extract Metadata for docker
       id: docker-meta
       uses: docker/metadata-action@v4.6.0
+      env:
+        MODULE_VERSION: ${{steps.version-number.outputs.MODULE_VERSION}}
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
