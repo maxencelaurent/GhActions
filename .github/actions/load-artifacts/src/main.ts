@@ -7,7 +7,7 @@
  * Please read LICENSE file for details
  */
 
-import core from '@actions/core';
+import * as core from '@actions/core';
 // import github from '@actions/github';
 
 import { ArtifactClient, DownloadResponse, create } from '@actions/artifact';
