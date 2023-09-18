@@ -24,7 +24,7 @@ jobs:
       - name: Download math result for job 1
         uses: actions/download-artifact@v3
         with:
-          name: homework2
+          name: homework
       - shell: bash
         run: |
           if [ -e math-homework.txt ]; then
@@ -32,4 +32,23 @@ jobs:
           else
             echo file do not exist
           fi
+
+  job_3:
+    name: downlod programatically
+    needs: job_1
+    runs-on: windows-latest
+    steps:
+      -
+        name: node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: src/main/node/yarn.lock
+      - name: yarn install
+        run: yarn --cwd src/main/node/ install 
+      - name: yarn build
+        run: yarn --cwd src/main/node/ build
+      - name: check artifacts
+        run: node src/main/node/dist/main.js 
 

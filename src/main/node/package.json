@@ -1,0 +1,23 @@
+{
+  "name": "gestio-wait-on",
+  "private": true,
+  "version": "1.0.0",
+  "license": "© OPAN concept SA",
+  "main": "dist/main.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "check": "eslint",
+    "build": "yarn run clean && tsc",
+    "start": "node dist/main.js",
+    "start-dev": "ts-node src/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "eslint": "^8.38.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@actions/artifact": "^1.1.2"
+  }
+}
