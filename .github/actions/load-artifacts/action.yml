@@ -5,5 +5,5 @@ inputs:
     description: 'list of artifact to download'
     required: false
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'dist/main.js'
