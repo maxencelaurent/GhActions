@@ -4,7 +4,6 @@ inputs:
   artifacts:
     description: 'list of artifact to download'
     required: false
-outputs:
 runs:
   using: 'node18'
   main: 'dist/main.js'
