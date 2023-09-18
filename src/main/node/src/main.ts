@@ -24,9 +24,11 @@ async function download(name: string) {
 
 console.log('ENV ', process.env);
 
-console.log('ENV ACTIONS TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
-const myToken = process.argv[1] || '';
+const myToken = process.argv[2] || '';
 console.log('My token ', myToken.length, myToken);
+
+process.env.ACTIONS_RUNTIME_TOKEN = myToken;
+console.log('ENV ACTIONS TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
 
 for (const name of ['homework', 'skhdkhh']) {
   download(name);
