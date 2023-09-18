@@ -1,0 +1,10 @@
+name: 'ArtifactedDockerImages'
+description: 'Load Docker Images From Artifacts'
+inputs:
+  artifacts:
+    description: 'list of artifact to download'
+    required: false
+outputs:
+runs:
+  using: 'node18'
+  main: 'dist/main.js'

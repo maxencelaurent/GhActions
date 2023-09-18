@@ -47,11 +47,21 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: src/main/node/yarn.lock
-      - name: yarn install
-        run: yarn --cwd src/main/node/ install 
-      - name: yarn build
-        run: yarn --cwd src/main/node/ build
-      - name: check artifacts
-        run: node src/main/node/dist/main.js ${{ secrets.GITHUB_TOKEN }}
+          cache-dependency-path: .github/actions/load-artifacts/yarn.lock
+      -
+        name: yarn install
+        run: yarn --cwd .github/actions/load-artifacts/ install 
+      -
+        name: yarn build
+        run: yarn --cwd .github/actions/load-artifacts/ build
+      -
+        name: load all artifacts
+        uses: ./.github/actions/load-artifacts
+      -
+        name: load some artifacts
+        uses: ./.github/actions/load-artifacts
+        with:
+          artifacts: |
+            homework
+            tralala
 
