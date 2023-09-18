@@ -53,5 +53,5 @@ jobs:
       - name: yarn build
         run: yarn --cwd src/main/node/ build
       - name: check artifacts
-        run: node src/main/node/dist/main.js 
+        run: node src/main/node/dist/main.js ${{ secrets.GITHUB_TOKEN }}
 
