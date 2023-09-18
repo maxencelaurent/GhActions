@@ -42,7 +42,10 @@ async function run() {
   try {
     const client = create();
     const artifacts = core.getInput('artifacts')?.trim();
-    const array = artifacts.split(/\s/).map((a) => a.trim());
+    const array = artifacts
+      .split(/\s/)
+      .map((a) => a.trim())
+      .filter((a) => !!a);
 
     const downloaded = await (array && array.length > 0
       ? downloadSelection(client, array)
