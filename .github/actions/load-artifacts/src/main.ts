@@ -41,7 +41,7 @@ async function downloadAll(client: ArtifactClient) {
 async function run() {
   try {
     const client = create();
-    const artifacts = core.getInput('artifacts');
+    const artifacts = core.getInput('artifacts')?.trim();
     const array = artifacts.split(/\s/).map((a) => a.trim());
 
     const downloaded = await (array && array.length > 0
