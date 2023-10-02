@@ -37,6 +37,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: grep test
+      run: grep coucou package.json
+
     - name: Extract Metadata for docker
       id: docker-meta
       uses: docker/metadata-action@v4.6.0
