@@ -27,6 +27,13 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
 
+    - name: env inspection
+      env:
+        MY_VAR: $GITHUB_OUTPUT
+      run: |
+        echo "GITHUB_OUTPUT $GITHUB_OUTPUT"
+        echo "My VAr $MY_VAR"
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
