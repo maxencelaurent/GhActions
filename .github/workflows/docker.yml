@@ -29,7 +29,7 @@ jobs:
 
     - name: env inspection
       env:
-        MY_VAR: $GITHUB_OUTPUT
+        MY_VAR: ${{ env.GITHUB_OUTPUT }}
       run: |
         echo "GITHUB_OUTPUT $GITHUB_OUTPUT"
         echo "My VAr $MY_VAR"
