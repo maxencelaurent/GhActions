@@ -20,12 +20,12 @@ jobs:
       - name: create network
         run: docker network create --driver bridge gestio-net  
 
+      - name: Check no net
+        run: docker run alpine sh -c "ip addr && wget --timeout=5 http://172.16.0.1:8025"
+
       - name: Check
         run: docker run \
              --network gestio-net \
              alpine sh -c "ip addr && wget --timeout=5 http://172.16.0.1:8025"
 
-      - name: Check no net
-        run: docker run \
-             alpine sh -c "ip addr && wget --timeout=5 http://172.16.0.1:8025"
 
