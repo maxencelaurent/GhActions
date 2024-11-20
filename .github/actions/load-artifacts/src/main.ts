@@ -7,6 +7,7 @@
  * Please read LICENSE file for details
  */
 
+import * as exec from 'child_process';
 import * as core from '@actions/core';
 // import github from '@actions/github';
 
@@ -14,24 +15,22 @@ import { ArtifactClient, DownloadResponse, create } from '@actions/artifact';
 
 const path = '/tmp';
 
-function processArtifact(response: DownloadResponse) {
+async function processArtifact(response: DownloadResponse) {
   console.log('Process ', response.artifactName, response.downloadPath);
-}
-
-async function download(client: ArtifactClient, name: string) {
-  try {
-    return await client.downloadArtifact(name, path);
-  } catch {
-    throw new Error(`Failed to download artifact "${name}"`);
-  }
+  exec.execSync(`docker load --input /tmp/${response.artifactName}.tar`);
 }
 
 async function downloadSelection(client: ArtifactClient, names: string[]) {
-  return await Promise.all(
-    names.map(async (name) => {
-      return await download(client, name);
-    }),
-  );
+  const artifacts: DownloadResponse[] = [];
+
+  for (const name of names) {
+    try {
+      artifacts.push(await client.downloadArtifact(name, path));
+    } catch (e) {
+      console.warn(`Failed to downlod artifact "${name}"`);
+    }
+  }
+  return artifacts;
 }
 
 async function downloadAll(client: ArtifactClient) {
