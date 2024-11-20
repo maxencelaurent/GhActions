@@ -1,4 +1,4 @@
-nname: TestMailhog
+name: TestMailhog
 
 on:
   push:
